@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What type of Korean are you?</title>
+  <style>
+    /* Reset & Global Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 40px;
+      animation: fadeIn 2s ease;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    button {
+      background-color: #1e88e5;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1em;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      margin: 10px;
+      position: relative;
+      outline: none;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    #message {
+      margin-top: 40px;
+      font-size: 1.5em;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>What type of Korean are you?</h1>
+    <button id="realButton">Real</button>
+    <button id="fakeButton">Fake</button>
+    <div id="message"></div>
+  </div>
+  
+  <script>
+    // Detect if the device is mobile (touch-enabled)
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Get button and message elements
+    const realButton = document.getElementById('realButton');
+    const fakeButton = document.getElementById('fakeButton');
+    const messageDiv = document.getElementById('message');
+
+    if (!isMobile) {
+      // Desktop behavior: make the "Real" button dodge the cursor when it gets too close
+      document.addEventListener('mousemove', (e) => {
+        const rect = realButton.getBoundingClientRect();
+        const btnX = rect.left + rect.width / 2;
+        const btnY = rect.top + rect.height / 2;
+        const distance = Math.hypot(e.clientX - btnX, e.clientY - btnY);
+        const threshold = 100; // pixels threshold
+      
+        if (distance < threshold) {
+          moveRealButton();
+        }
+      });
+
+      // Function to randomly reposition the "Real" button
+      function moveRealButton() {
+        const maxX = window.innerWidth - realButton.offsetWidth;
+        const maxY = window.innerHeight - realButton.offsetHeight;
+        const newLeft = Math.random() * maxX;
+        const newTop = Math.random() * maxY;
+        realButton.style.position = 'absolute';
+        realButton.style.left = newLeft + 'px';
+        realButton.style.top = newTop + 'px';
+      }
+
+      // When "Fake" button is clicked, display the message
+      fakeButton.addEventListener('click', () => {
+        messageDiv.textContent = "Finally, you accept!";
+        messageDiv.style.opacity = 1;
+      });
+    } else {
+      // Mobile behavior:
+      // Clicking the "Fake" button increases its size while making the "Real" button shrink.
+      let realScale = 1;
+      let fakeScale = 1;
+
+      fakeButton.addEventListener('click', () => {
+        // Increase the fake button size
+        fakeScale *= 1.1;
+        // Decrease the real button size
+        realScale *= 0.9;
+        
+        fakeButton.style.transform = 'scale(' + fakeScale + ')';
+        realButton.style.transform = 'scale(' + realScale + ')';
+
+        // Once the "Real" button is too small, remove it and reveal the acceptance message
+        if (realScale < 0.2) {
+          realButton.style.display = 'none';
+          messageDiv.textContent = "Finally, you accept!";
+          messageDiv.style.opacity = 1;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
